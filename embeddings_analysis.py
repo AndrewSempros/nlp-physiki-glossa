@@ -1,0 +1,121 @@
+import os
+import nltk
+import torch
+import matplotlib.pyplot as plt
+from nltk import word_tokenize
+from nltk.corpus import stopwords
+from sklearn.decomposition import PCA
+from sklearn.metrics.pairwise import cosine_similarity
+from transformers import AutoTokenizer, AutoModel
+
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+nltk.download('punkt', quiet=True)
+nltk.download('stopwords', quiet=True)
+stop_words = set(stopwords.words('english'))
+
+tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
+model     = AutoModel.from_pretrained('bert-base-uncased').to('cpu')
+model.eval()
+
+def embed_text(text: str) -> torch.Tensor:
+    toks = tokenizer(text, return_tensors='pt', truncation=True, max_length=128)
+    with torch.no_grad():
+        out = model(**toks)
+    return out.last_hidden_state.mean(dim=1).squeeze().numpy()
+
+def extract_keywords(text: str) -> list[str]:
+    toks = [w.lower() for w in word_tokenize(text) if w.isalpha()]
+    return [w for w in toks if w not in stop_words]
+
+originals = {
+    'Text 1': (
+        "Today is our dragon boat festival, in our Chinese culture, to celebrate it with all safe and great in "
+        "our lives. Hope you too, to enjoy it as my deepest wishes. Thank your message to show our words to the "
+        "doctor, as his next contract checking, to all of us. I got this message to see the approved message. In fact, "
+        "I have received the message from the professor, to show me, this, a couple of days ago. I am very appreciated "
+        "the full support of the professor, for our Springer proceedings publication."
+    ),
+    'Text 2': (
+        "During our final discuss, I told him about the new submission — the one we were waiting since last autumn, "
+        "but the updates was confusing as it not included the full feedback from reviewer or maybe editor? Anyway, I believe "
+        "the team, although bit delay and less communication at recent days, they really tried best for paper and cooperation. "
+        "We should be grateful, I mean all of us, for the acceptance and efforts until the Springer link came finally last week, I think. "
+        "Also, kindly remind me please, if the doctor still plan for the acknowledgments section edit before he sends again. "
+        "Because I didn’t see that part final yet, or maybe I missed, I apologize if so. Overall, let us make sure all are safe and "
+        "celebrate the outcome with strong coffee and future targets."
+    )
+}
+
+reconstructions = {
+    'Text 1': {
+        'T5-PAWS': (
+            "Today is our dragon boat festival in our Chinese culture to celebrate it with all safe and great in our lives. "
+            "I hope you too will enjoy it as my deepest wishes. Thank your message to show our words to the doctor as his next contract check. "
+            "I received this message to see the approved message. In fact, a couple of days ago I received the message from the professor to show me. "
+            "I am very thankful for the professor's full support for our Springer proceedings publication."
+        ),
+        'Pegasus': (
+            "The dragon boat festival is celebrated in our Chinese culture and we should all be happy. "
+            "I hope you enjoy it as much as I do. Thank you for your message, which will be shown to the doctor. "
+            "I saw the approved message when I received this message. The professor sent a message to me a few days ago. "
+            "The professor was very supportive of the Springer proceedings publication."
+        ),
+        'Humarin': (
+            "Our Chinese culture features a dragon boat festival today, where we commemorate it with all the good we have come to know. "
+            "Until next time, may it be just as special to you as it is to me. As the next contract checking came and went, thank you "
+            "for sending your message to the doctor to display what we had told him. I received this message to view the authorized message. "
+            "The professor sent me a message to show me a couple of days ago, and I have been in touch with him ever since. "
+            "The prof's complete endorsement of our Springer proceedings publication receives my complete appreciation."
+        )
+    },
+    'Text 2': {
+        'T5-PAWS': (
+            "During our final discussion, I told him about the new submission — the one we had been waiting for since last autumn, "
+            "but the updates were confusing as they did not include the full feedback from reviewer or editor. Anyway, the team, "
+            "although recently a bit delayed and less communicative, really tried their best for paper and cooperation. We should be "
+            "grateful for the acceptance and efforts until the Springer link finally came last week. Please also remind me if the doctor "
+            "plans to edit the acknowledgments section before sending again. I apologize if I missed that part; I didn’t see it final yet. "
+            "Let us make sure all are safe and celebrate the outcome with strong coffee and future targets."
+        ),
+        'Pegasus': (
+            "I told him about the new submission we were waiting for, but the updates didn't include the full feedback from the reviewer "
+            "or editor, which was confusing. The team tried their best for paper and cooperation despite the recent delay and less communication. "
+            "We should be thankful for the acceptance and efforts until the Springer link came last week. If the doctor still plans to edit the "
+            "acknowledgments section, please remind me. I apologize if I missed it; I haven't seen it final yet. Let's make sure everyone is safe "
+            "and celebrate the outcome with coffee and targets."
+        ),
+        'Humarin': (
+            "During our last discussion, I shared with him the new submission I had been waiting for last autumn, but the changes were unclear as "
+            "they did not provide the complete feedback from the reviewer or editor. Despite some delays and less communication in the past few days, "
+            "the team made significant efforts to improve their paper and collaboration. We should be thankful for the determination that led to the "
+            "Springer link finally being released last week. If the doctor plans to revise the acknowledgments section before re-submitting, please remind me. "
+            "I regret not noticing it yet. Let us ensure everyone's safety and commemorate this outcome with strong coffee and future goals."
+        )
+    }
+}
+
+for label, orig in originals.items():
+    print(f"\n=== Cosine Similarities ({label}) ===")
+    orig_emb = embed_text(orig).reshape(1, -1)
+
+    for name, recon in reconstructions[label].items():
+        recon_emb = embed_text(recon).reshape(1, -1)
+        cos = cosine_similarity(orig_emb, recon_emb)[0][0]
+        print(f"{name:<8}: {cos:.4f}")
+
+    orig_kw = extract_keywords(orig)
+    peg_kw  = extract_keywords(reconstructions[label]['Pegasus'])
+    all_kw  = sorted(set(orig_kw + peg_kw))
+    embs    = [embed_text(w) for w in all_kw]
+    coords  = PCA(n_components=2).fit_transform(embs)
+
+    plt.figure(figsize=(7,5))
+    colors = ['blue' if w in orig_kw else 'red' for w in all_kw]
+    plt.scatter(coords[:,0], coords[:,1], c=colors)
+    for i, w in enumerate(all_kw):
+        plt.annotate(w, (coords[i,0], coords[i,1]), fontsize=7)
+    plt.title(f"PCA: {label} Original vs Pegasus Keywords")
+    plt.xlabel("PC1")
+    plt.ylabel("PC2")
+    plt.tight_layout()
+    plt.show()
