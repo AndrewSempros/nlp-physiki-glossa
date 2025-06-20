@@ -71,7 +71,7 @@ nlp-physiki-glossa/
 
 ---
 
-## Συνεισφορά
+## Contributing
 
 1. Fork & clone το repository.  
 2. Δημιουργία νέου branch:  
