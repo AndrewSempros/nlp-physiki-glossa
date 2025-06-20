@@ -16,7 +16,7 @@ nlp-paraphrasing/
 ├── embeddings_analysis.py          # Παραδοτέο 2: Cosine & PCA ανάλυση
 ├── README.md                       # Αυτό το αρχείο
 ├── .gitignore                      # Αγνοούμενα αρχεία
-└── .env.example                    # Παράδειγμα .env
+└── .env                            #.env
 ```
 
 ---
@@ -30,7 +30,6 @@ conda create -n nlp-env python=3.10 -y
 conda activate nlp-env
 pip install --upgrade pip
 pip install -r requirements.txt
-cp .env.example .env   
 ```
 
 ---
