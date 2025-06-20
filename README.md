@@ -1,4 +1,4 @@
-# NLP Paraphrasing & Semantic Reconstruction
+# NLP Paraphrasing & Reconstruction
 
 Αυτό το repository περιέχει κώδικα για:
 1. **Manual Automaton** (rule-based παραφράσεις)  
