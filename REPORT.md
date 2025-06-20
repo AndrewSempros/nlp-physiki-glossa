@@ -95,7 +95,5 @@ Improved: I believe our team, despite some delays and reduced communication rece
 Η συνδυαστική χρήση manual κανόνων και transformer-based μοντέλων παρέχει την καλύτερη ισορροπία ανάμεσα σε ακρίβεια και ευχρηστία. Οι embedding-based μετρήσεις cosine & PCA επιβεβαιώνουν τη στενή διατήρηση νοήματος.
 
 ## 6. Βιβλιογραφία
-1. Youtube
-2. Stackoverflow
-3. Chatgpt
-4. 
+1. Stackoverflow https://stackoverflow.com/questions/69801841/how-to-use-gpt-j-for-paraphrasing
+2. Youtube https://www.youtube.com/watch?v=pgzXzVU4nJQ
