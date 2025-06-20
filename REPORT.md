@@ -95,8 +95,7 @@ Improved: I believe our team, despite some delays and reduced communication rece
 Η συνδυαστική χρήση manual κανόνων και transformer-based μοντέλων παρέχει την καλύτερη ισορροπία ανάμεσα σε ακρίβεια και ευχρηστία. Οι embedding-based μετρήσεις cosine & PCA επιβεβαιώνουν τη στενή διατήρηση νοήματος.
 
 ## 6. Βιβλιογραφία
-1. Papineni K. et al. (2002). “BLEU: a Method for Automatic Evaluation of Machine Translation.”  
-2. Vaswani A. et al. (2017). “Attention Is All You Need.”  
-3. Devlin J. et al. (2019). “BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding.”  
-4. Reimers N. & Gurevych I. (2019). “Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks.”  
-5. Lewis M. et al. (2020). “BART: Denoising Sequence-to-Sequence Pre-training for Natural Language Generation.”  
+1. Youtube
+2. Stackoverflow
+3. Chatgpt
+4. 
