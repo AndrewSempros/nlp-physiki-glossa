@@ -41,9 +41,7 @@ Improved: Today marks our Dragon Boat Festival in Chinese culture, celebrating s
 Original: Anyway, I believe the team, although bit delay and less communication at recent days, they really tried best for paper and cooperation.
 Improved: I believe our team, despite some delays and reduced communication recently, has done its best on the paper and in our collaboration.
 
-vbnet
-Copy
-Edit
+
 
 ### B. Transformer Pipelines
 
