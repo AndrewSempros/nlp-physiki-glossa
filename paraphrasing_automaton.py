@@ -8,11 +8,6 @@ import stanza
 logging.disable(logging.CRITICAL)
 
 class ParaphrasingAutomaton:
-    """
-    Αυτόματο παραφράσεων με:
-      1) Manual rewrites (exact match map)
-      2) Registered NLP techniques (functions) applied σειριακά
-    """
     def __init__(self, manual_map=None):
         try:
             nltk.data.find('tokenizers/punkt')
@@ -30,7 +25,6 @@ class ParaphrasingAutomaton:
         self.techniques = []  
 
     def register(self, name, fn):
-        """Καταχωρεί τεχνική παραφράσεων: fn: str->str"""
         self.techniques.append((name, fn))
 
     def paraphrase(self, sentence: str) -> str:
