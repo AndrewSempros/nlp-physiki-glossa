@@ -14,7 +14,7 @@ nlp-physiki-glossa/
 ├── paraphrasing_automaton.py
 ├── paraphrasing_pipelines_three.py
 ├── embeddings_analysis.py
-├── REPORT.md                       # Δομημένη αναφορά
+├── REPORT.md                      
 ├── README.md
 ├── .gitignore
 └── .env
